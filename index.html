@@ -2,87 +2,152 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Tap Perasaan Anak • Penghitung</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>Tap Perasaan Anak • Responsif</title>
     <style>
-        /* ---------- RESET & BASE ---------- */
-        * {
+        /* ============================================================
+           RESET & BASE
+        ============================================================ */
+        *,
+        *::before,
+        *::after {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            height: 100%;
+            -webkit-text-size-adjust: 100%;
         }
 
         body {
             font-family: 'Segoe UI', 'Comic Sans MS', 'Chalkboard SE', cursive, sans-serif;
             background: #f0f4ff;
             min-height: 100vh;
+            min-height: 100dvh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 16px;
+            padding: clamp(8px, 2vh, 24px) clamp(8px, 2vw, 24px);
             transition: background-color 0.6s ease;
+            overflow-x: hidden;
         }
 
+        /* ============================================================
+           APP CONTAINER
+        ============================================================ */
         .app {
-            max-width: 520px;
             width: 100%;
+            max-width: 1100px;          /* Laptop */
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            border-radius: 48px;
-            padding: 28px 22px 32px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12), 0 8px 24px rgba(0, 0, 0, 0.05);
+            border-radius: clamp(24px, 4vw, 48px);
+            padding: clamp(16px, 3vh, 32px) clamp(14px, 3vw, 40px);
+            box-shadow:
+                0 20px 60px rgba(0, 0, 0, 0.12),
+                0 8px 24px rgba(0, 0, 0, 0.05);
             border: 2px solid rgba(255, 255, 255, 0.6);
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            /* batasi tinggi agar tidak overflow di layar pendek */
+            max-height: calc(100dvh - clamp(16px, 4vh, 48px));
+            display: flex;
+            flex-direction: column;
         }
 
-        /* ---------- HEADER ---------- */
+        /* ============================================================
+           HEADER
+        ============================================================ */
         .header {
             text-align: center;
-            margin-bottom: 18px;
-            position: relative;
+            margin-bottom: clamp(10px, 1.6vh, 20px);
+            flex-shrink: 0;
         }
 
         .header h1 {
-            font-size: 2rem;
+            font-size: clamp(1.3rem, 3.5vw, 2.4rem);
             font-weight: 700;
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             letter-spacing: -0.5px;
-            line-height: 1.2;
+            line-height: 1.15;
         }
 
         .header .sub {
-            font-size: 0.95rem;
+            font-size: clamp(0.75rem, 1.4vw, 1rem);
             color: #7a7a9a;
             font-weight: 500;
-            margin-top: 2px;
+            margin-top: 4px;
             letter-spacing: 0.3px;
         }
 
-        /* ---------- DISPLAY AREA ---------- */
+        /* ============================================================
+           LAYOUT UTAMA (grid untuk laptop: display + emotions berdampingan)
+        ============================================================ */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: clamp(12px, 2.2vw, 28px);
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .left-col {
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            min-width: 0;
+        }
+
+        .right-col {
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            min-width: 0;
+            overflow-y: auto;
+            padding-right: 2px;
+        }
+
+        /* Scrollbar halus */
+        .right-col::-webkit-scrollbar {
+            width: 6px;
+        }
+        .right-col::-webkit-scrollbar-thumb {
+            background: rgba(150, 150, 200, 0.3);
+            border-radius: 10px;
+        }
+        .right-col::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        /* ============================================================
+           DISPLAY AREA
+        ============================================================ */
         .display-area {
             background: rgba(245, 247, 255, 0.7);
-            border-radius: 32px;
-            padding: 18px 12px 14px;
-            margin-bottom: 22px;
+            border-radius: clamp(20px, 3vw, 32px);
+            padding: clamp(14px, 3vh, 28px) clamp(12px, 2vw, 20px);
             border: 2px dashed rgba(150, 150, 200, 0.25);
             transition: all 0.4s ease;
-            min-height: 130px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            position: relative;
+            flex: 1;
+            min-height: clamp(140px, 22vh, 260px);
+            text-align: center;
         }
 
         .display-area .emoji-big {
-            font-size: 4.2rem;
-            line-height: 1.2;
+            font-size: clamp(3.2rem, 8vw, 6rem);
+            line-height: 1.1;
             transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
             transform: scale(1);
         }
@@ -92,26 +157,18 @@
         }
 
         @keyframes popEmoji {
-            0% {
-                transform: scale(0.3) rotate(-12deg);
-                opacity: 0.2;
-            }
-            50% {
-                transform: scale(1.3) rotate(6deg);
-            }
-            100% {
-                transform: scale(1) rotate(0deg);
-                opacity: 1;
-            }
+            0%   { transform: scale(0.3) rotate(-12deg); opacity: 0.2; }
+            50%  { transform: scale(1.3) rotate(6deg); }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
         }
 
         .display-area .feeling-label {
-            font-size: 1.6rem;
+            font-size: clamp(1rem, 2.4vw, 1.7rem);
             font-weight: 700;
             color: #2d2d4a;
-            margin-top: 4px;
+            margin-top: clamp(4px, 1vh, 10px);
             transition: all 0.3s ease;
-            min-height: 2.4rem;
+            line-height: 1.25;
         }
 
         .display-area .feeling-label .highlight {
@@ -122,26 +179,28 @@
         }
 
         .display-area .hint-text {
-            font-size: 0.85rem;
+            font-size: clamp(0.7rem, 1.2vw, 0.9rem);
             color: #9a9ab0;
             font-weight: 400;
-            margin-top: 2px;
-            min-height: 1.2rem;
+            margin-top: 6px;
+            min-height: 1.2em;
         }
 
-        /* ---------- EMOTION GRID ---------- */
+        /* ============================================================
+           EMOTION GRID
+        ============================================================ */
         .emotion-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            margin-bottom: 18px;
+            gap: clamp(8px, 1.2vw, 14px);
+            margin-bottom: clamp(10px, 1.6vh, 16px);
         }
 
         .emotion-btn {
             background: white;
-            border: none;
-            border-radius: 24px;
-            padding: 14px 6px 12px;
+            border: 2px solid transparent;
+            border-radius: clamp(14px, 2vw, 24px);
+            padding: clamp(10px, 1.6vh, 16px) 6px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -149,120 +208,130 @@
             cursor: pointer;
             transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-            border: 2px solid transparent;
             position: relative;
             touch-action: manipulation;
-            -webkit-tap-highlight-color: transparent;
-            min-height: 90px;
+            min-height: clamp(80px, 12vh, 120px);
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .emotion-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.10);
         }
 
         .emotion-btn:active {
-            transform: scale(0.90);
+            transform: scale(0.92);
         }
 
         .emotion-btn .emoji {
-            font-size: 2.6rem;
-            line-height: 1.2;
+            font-size: clamp(1.6rem, 3.6vw, 2.8rem);
+            line-height: 1.15;
             transition: transform 0.2s ease;
         }
 
         .emotion-btn .label {
-            font-size: 0.75rem;
+            font-size: clamp(0.65rem, 1.1vw, 0.85rem);
             font-weight: 600;
             color: #3d3d5c;
             margin-top: 4px;
             letter-spacing: 0.2px;
+            white-space: nowrap;
         }
 
-        /* --- Counter di dalam tombol --- */
         .emotion-btn .tap-counter {
-            font-size: 0.7rem;
+            font-size: clamp(0.6rem, 1vw, 0.78rem);
             font-weight: 700;
             color: #6c6c8a;
-            background: rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.75);
             padding: 2px 10px;
             border-radius: 30px;
-            margin-top: 4px;
+            margin-top: 5px;
             display: inline-block;
             border: 1px solid rgba(150, 150, 200, 0.15);
             backdrop-filter: blur(4px);
-            transition: all 0.2s ease;
-            min-width: 28px;
+            transition: all 0.25s ease;
+            min-width: 30px;
             text-align: center;
         }
 
+        /* Animasi saat counter berubah */
+        .emotion-btn .tap-counter.bump {
+            transform: scale(1.25);
+            background: #ffe066;
+            color: #7a5c00;
+        }
+
         /* --- Warna per tombol --- */
-        .emotion-btn[data-emotion="happy"] {
-            background: #fff8e7;
-            border-color: #ffd93d;
-        }
-        .emotion-btn[data-emotion="happy"]:active {
-            background: #ffedb5;
+        .emotion-btn[data-emotion="happy"]     { background: #fff8e7; border-color: #ffd93d; }
+        .emotion-btn[data-emotion="happy"]:active { background: #ffedb5; }
+
+        .emotion-btn[data-emotion="sad"]       { background: #e8f0fe; border-color: #6c9bd9; }
+        .emotion-btn[data-emotion="sad"]:active { background: #c5d9f5; }
+
+        .emotion-btn[data-emotion="angry"]     { background: #fde8e8; border-color: #f56a6a; }
+        .emotion-btn[data-emotion="angry"]:active { background: #f8c8c8; }
+
+        .emotion-btn[data-emotion="scared"]    { background: #f0e8fd; border-color: #b38bdb; }
+        .emotion-btn[data-emotion="scared"]:active { background: #dcc8f5; }
+
+        .emotion-btn[data-emotion="surprised"] { background: #fef3e0; border-color: #f5b86a; }
+        .emotion-btn[data-emotion="surprised"]:active { background: #fce2b5; }
+
+        .emotion-btn[data-emotion="tired"]     { background: #eaeef5; border-color: #9aaec9; }
+        .emotion-btn[data-emotion="tired"]:active { background: #cdd7e8; }
+
+        .emotion-btn[data-emotion="loved"]     { background: #fde8f0; border-color: #f58a9f; }
+        .emotion-btn[data-emotion="loved"]:active { background: #fcc8d6; }
+
+        .emotion-btn[data-emotion="playful"]   { background: #e8fce8; border-color: #7bc97b; }
+        .emotion-btn[data-emotion="playful"]:active { background: #b8f0b8; }
+
+        /* ============================================================
+           FOOTER ACTIONS
+        ============================================================ */
+        .footer-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-top: clamp(8px, 1.4vh, 14px);
+            flex-shrink: 0;
+            flex-wrap: wrap;
         }
 
-        .emotion-btn[data-emotion="sad"] {
-            background: #e8f0fe;
-            border-color: #6c9bd9;
+        .reset-btn {
+            padding: clamp(7px, 1.2vh, 11px) clamp(16px, 2.4vw, 24px);
+            border: none;
+            border-radius: 40px;
+            background: rgba(200, 200, 220, 0.3);
+            color: #7a7a9a;
+            font-size: clamp(0.7rem, 1.1vw, 0.85rem);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            touch-action: manipulation;
+            font-family: inherit;
         }
-        .emotion-btn[data-emotion="sad"]:active {
-            background: #c5d9f5;
+        .reset-btn:hover  { background: rgba(200, 200, 220, 0.5); }
+        .reset-btn:active { transform: scale(0.94); }
+
+        .total-indicator {
+            font-size: clamp(0.7rem, 1.1vw, 0.85rem);
+            color: #6c6c8a;
+            font-weight: 600;
+            background: rgba(200, 200, 220, 0.25);
+            padding: clamp(5px, 1vh, 8px) clamp(12px, 2vw, 18px);
+            border-radius: 30px;
+            backdrop-filter: blur(4px);
         }
 
-        .emotion-btn[data-emotion="angry"] {
-            background: #fde8e8;
-            border-color: #f56a6a;
-        }
-        .emotion-btn[data-emotion="angry"]:active {
-            background: #f8c8c8;
-        }
-
-        .emotion-btn[data-emotion="scared"] {
-            background: #f0e8fd;
-            border-color: #b38bdb;
-        }
-        .emotion-btn[data-emotion="scared"]:active {
-            background: #dcc8f5;
-        }
-
-        .emotion-btn[data-emotion="surprised"] {
-            background: #fef3e0;
-            border-color: #f5b86a;
-        }
-        .emotion-btn[data-emotion="surprised"]:active {
-            background: #fce2b5;
-        }
-
-        .emotion-btn[data-emotion="tired"] {
-            background: #eaeef5;
-            border-color: #9aaec9;
-        }
-        .emotion-btn[data-emotion="tired"]:active {
-            background: #cdd7e8;
-        }
-
-        .emotion-btn[data-emotion="loved"] {
-            background: #fde8f0;
-            border-color: #f58a9f;
-        }
-        .emotion-btn[data-emotion="loved"]:active {
-            background: #fcc8d6;
-        }
-
-        .emotion-btn[data-emotion="playful"] {
-            background: #e8fce8;
-            border-color: #7bc97b;
-        }
-        .emotion-btn[data-emotion="playful"]:active {
-            background: #b8f0b8;
-        }
-
-        /* ---------- SPARKLE / CONFETTI ---------- */
+        /* ============================================================
+           SPARKLE / CONFETTI
+        ============================================================ */
         .sparkle-container {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            inset: 0;
             pointer-events: none;
             overflow: hidden;
             z-index: 999;
@@ -270,146 +339,187 @@
 
         .sparkle {
             position: absolute;
-            font-size: 1.6rem;
             animation: sparkleFloat 1.2s ease-out forwards;
             pointer-events: none;
             user-select: none;
         }
 
         @keyframes sparkleFloat {
-            0% {
-                opacity: 1;
-                transform: translate(0, 0) scale(0.5) rotate(0deg);
-            }
-            100% {
-                opacity: 0;
-                transform: translate(var(--tx), var(--ty)) scale(1.6) rotate(360deg);
-            }
+            0%   { opacity: 1; transform: translate(0, 0) scale(0.5) rotate(0deg); }
+            100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(1.6) rotate(360deg); }
         }
 
         .confetti-piece {
             position: fixed;
-            width: 12px;
-            height: 12px;
-            border-radius: 3px;
             pointer-events: none;
             z-index: 999;
             animation: confettiFall 1.8s ease-out forwards;
         }
 
         @keyframes confettiFall {
-            0% {
-                opacity: 1;
-                transform: translate(0, 0) rotate(0deg) scale(0.6);
-            }
-            100% {
-                opacity: 0;
-                transform: translate(var(--cx), var(--cy)) rotate(720deg) scale(1.2);
-            }
+            0%   { opacity: 1; transform: translate(0, 0) rotate(0deg) scale(0.6); }
+            100% { opacity: 0; transform: translate(var(--cx), var(--cy)) rotate(720deg) scale(1.2); }
         }
 
-        /* ---------- RESET & VOICE INDICATOR (dihilangkan suara) ---------- */
-        .reset-btn {
-            display: block;
-            margin: 0 auto;
-            padding: 8px 20px;
-            border: none;
-            border-radius: 40px;
-            background: rgba(200, 200, 220, 0.3);
-            color: #7a7a9a;
-            font-size: 0.75rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            touch-action: manipulation;
-        }
-        .reset-btn:active {
-            transform: scale(0.94);
-            background: rgba(200, 200, 220, 0.5);
-        }
-
-        .footer-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 6px;
-        }
-
-        .total-indicator {
-            font-size: 0.75rem;
-            color: #9a9ab0;
-            background: rgba(200, 200, 220, 0.2);
-            padding: 4px 14px;
-            border-radius: 30px;
-            backdrop-filter: blur(4px);
-        }
-
-        /* ---------- RESPONSIVE ---------- */
-        @media (max-width: 460px) {
+        /* ============================================================
+           RESPONSIVE — TABLET (≤ 900px)
+        ============================================================ */
+        @media (max-width: 900px) {
             .app {
-                padding: 20px 14px 24px;
-                border-radius: 32px;
+                max-width: 720px;
             }
-            .header h1 {
-                font-size: 1.6rem;
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 14px;
             }
-            .display-area .emoji-big {
-                font-size: 3.2rem;
+            .right-col {
+                overflow-y: visible;
+                padding-right: 0;
             }
-            .display-area .feeling-label {
-                font-size: 1.3rem;
-            }
-            .emotion-grid {
-                gap: 10px;
-            }
-            .emotion-btn {
-                padding: 12px 4px 10px;
-                min-height: 76px;
-                border-radius: 20px;
-            }
-            .emotion-btn .emoji {
-                font-size: 2.2rem;
-            }
-            .emotion-btn .label {
-                font-size: 0.7rem;
-            }
-            .emotion-btn .tap-counter {
-                font-size: 0.6rem;
-                padding: 1px 8px;
-                min-width: 22px;
+            .display-area {
+                min-height: clamp(130px, 20vh, 200px);
             }
         }
 
-        @media (max-width: 380px) {
+        /* ============================================================
+           RESPONSIVE — HP (≤ 560px)
+        ============================================================ */
+        @media (max-width: 560px) {
+            body {
+                padding: 8px;
+                align-items: flex-start;
+            }
+            .app {
+                border-radius: 28px;
+                padding: 16px 12px 18px;
+                max-height: none;
+                min-height: auto;
+                margin-top: 4px;
+            }
+            .main-content {
+                gap: 12px;
+            }
+            .display-area {
+                min-height: 120px;
+                padding: 14px 10px;
+            }
             .emotion-grid {
                 gap: 8px;
             }
             .emotion-btn {
-                min-height: 66px;
+                min-height: 78px;
                 padding: 10px 2px 8px;
+                border-radius: 18px;
             }
-            .emotion-btn .emoji {
-                font-size: 1.8rem;
+            .emotion-btn .label {
+                font-size: 0.66rem;
             }
             .emotion-btn .tap-counter {
-                font-size: 0.55rem;
-                padding: 1px 6px;
-                min-width: 18px;
+                min-width: 24px;
+                padding: 1px 7px;
+                font-size: 0.6rem;
+            }
+            .footer-actions {
+                justify-content: center;
             }
         }
 
-        /* ---------- UTILITY ---------- */
-        .hidden {
-            display: none !important;
+        /* ============================================================
+           RESPONSIVE — HP KECIL (≤ 380px)
+        ============================================================ */
+        @media (max-width: 380px) {
+            .app {
+                padding: 12px 8px 14px;
+                border-radius: 22px;
+            }
+            .header h1 {
+                font-size: 1.15rem;
+            }
+            .header .sub {
+                font-size: 0.7rem;
+            }
+            .display-area {
+                min-height: 100px;
+            }
+            .emotion-grid {
+                gap: 6px;
+            }
+            .emotion-btn {
+                min-height: 68px;
+                padding: 8px 1px 6px;
+                border-radius: 14px;
+            }
+            .emotion-btn .emoji {
+                font-size: 1.5rem;
+            }
+            .emotion-btn .label {
+                font-size: 0.6rem;
+            }
+            .emotion-btn .tap-counter {
+                min-width: 20px;
+                padding: 1px 5px;
+                font-size: 0.55rem;
+            }
+        }
+
+        /* ============================================================
+           LAPTOP BESAR (≥ 1280px) — grid 8 kolom
+        ============================================================ */
+        @media (min-width: 1280px) {
+            .app {
+                max-width: 1200px;
+            }
+            .emotion-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        /* ============================================================
+           ORIENTASI LANDSCAPE DI HP PENDEK
+        ============================================================ */
+        @media (max-height: 500px) and (orientation: landscape) {
+            body {
+                align-items: flex-start;
+                padding: 6px;
+            }
+            .app {
+                max-height: calc(100dvh - 12px);
+                padding: 10px 16px;
+                border-radius: 20px;
+            }
+            .header h1 {
+                font-size: 1.1rem;
+            }
+            .header .sub {
+                display: none;
+            }
+            .display-area {
+                min-height: 90px;
+                padding: 8px;
+            }
+            .display-area .emoji-big {
+                font-size: 2.4rem;
+            }
+            .display-area .feeling-label {
+                font-size: 0.95rem;
+            }
+            .emotion-btn {
+                min-height: 62px;
+                padding: 6px 2px;
+            }
+            .emotion-btn .emoji {
+                font-size: 1.5rem;
+            }
+            .emotion-btn .tap-counter {
+                display: none;   /* sembunyikan counter di layar sangat pendek */
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- ========== SPARKLE / CONFETTI CONTAINER ========== -->
     <div class="sparkle-container" id="sparkleContainer"></div>
 
-    <!-- ========== APP ========== -->
     <div class="app" id="app">
 
         <!-- HEADER -->
@@ -418,143 +528,133 @@
             <div class="sub">Apa yang kamu rasakan hari ini?</div>
         </div>
 
-        <!-- DISPLAY -->
-        <div class="display-area" id="displayArea">
-            <div class="emoji-big" id="emojiBig">😊</div>
-            <div class="feeling-label" id="feelingLabel">
-                <span class="highlight">Aku merasa...</span>
+        <!-- MAIN CONTENT (2 kolom di laptop/tablet besar, 1 kolom di HP) -->
+        <div class="main-content">
+
+            <!-- KOLOM KIRI: DISPLAY -->
+            <div class="left-col">
+                <div class="display-area" id="displayArea">
+                    <div class="emoji-big" id="emojiBig">😊</div>
+                    <div class="feeling-label" id="feelingLabel">
+                        <span class="highlight">Aku merasa...</span>
+                    </div>
+                    <div class="hint-text" id="hintText">ketuk salah satu perasaan</div>
+                </div>
             </div>
-            <div class="hint-text" id="hintText">ketuk salah satu perasaan di bawah</div>
-        </div>
 
-        <!-- GRID EMOSI -->
-        <div class="emotion-grid" id="emotionGrid">
-            <!-- HAPPY -->
-            <button class="emotion-btn" data-emotion="happy" data-emoji="😊" data-label="Senang">
-                <span class="emoji">😊</span>
-                <span class="label">Senang</span>
-                <span class="tap-counter" id="counter-happy">0</span>
-            </button>
-            <!-- SAD -->
-            <button class="emotion-btn" data-emotion="sad" data-emoji="😢" data-label="Sedih">
-                <span class="emoji">😢</span>
-                <span class="label">Sedih</span>
-                <span class="tap-counter" id="counter-sad">0</span>
-            </button>
-            <!-- ANGRY -->
-            <button class="emotion-btn" data-emotion="angry" data-emoji="😡" data-label="Marah">
-                <span class="emoji">😡</span>
-                <span class="label">Marah</span>
-                <span class="tap-counter" id="counter-angry">0</span>
-            </button>
-            <!-- SCARED -->
-            <button class="emotion-btn" data-emotion="scared" data-emoji="😨" data-label="Takut">
-                <span class="emoji">😨</span>
-                <span class="label">Takut</span>
-                <span class="tap-counter" id="counter-scared">0</span>
-            </button>
-            <!-- SURPRISED -->
-            <button class="emotion-btn" data-emotion="surprised" data-emoji="😲" data-label="Terkejut">
-                <span class="emoji">😲</span>
-                <span class="label">Terkejut</span>
-                <span class="tap-counter" id="counter-surprised">0</span>
-            </button>
-            <!-- TIRED -->
-            <button class="emotion-btn" data-emotion="tired" data-emoji="😴" data-label="Lelah">
-                <span class="emoji">😴</span>
-                <span class="label">Lelah</span>
-                <span class="tap-counter" id="counter-tired">0</span>
-            </button>
-            <!-- LOVED -->
-            <button class="emotion-btn" data-emotion="loved" data-emoji="❤️" data-label="Dicintai">
-                <span class="emoji">❤️</span>
-                <span class="label">Dicintai</span>
-                <span class="tap-counter" id="counter-loved">0</span>
-            </button>
-            <!-- PLAYFUL -->
-            <button class="emotion-btn" data-emotion="playful" data-emoji="😜" data-label="Ceria">
-                <span class="emoji">😜</span>
-                <span class="label">Ceria</span>
-                <span class="tap-counter" id="counter-playful">0</span>
-            </button>
-        </div>
+            <!-- KOLOM KANAN: GRID EMOSI + FOOTER -->
+            <div class="right-col">
+                <div class="emotion-grid" id="emotionGrid">
+                    <button class="emotion-btn" data-emotion="happy" data-emoji="😊" data-label="Senang">
+                        <span class="emoji">😊</span>
+                        <span class="label">Senang</span>
+                        <span class="tap-counter" id="counter-happy">0</span>
+                    </button>
+                    <button class="emotion-btn" data-emotion="sad" data-emoji="😢" data-label="Sedih">
+                        <span class="emoji">😢</span>
+                        <span class="label">Sedih</span>
+                        <span class="tap-counter" id="counter-sad">0</span>
+                    </button>
+                    <button class="emotion-btn" data-emotion="angry" data-emoji="😡" data-label="Marah">
+                        <span class="emoji">😡</span>
+                        <span class="label">Marah</span>
+                        <span class="tap-counter" id="counter-angry">0</span>
+                    </button>
+                    <button class="emotion-btn" data-emotion="scared" data-emoji="😨" data-label="Takut">
+                        <span class="emoji">😨</span>
+                        <span class="label">Takut</span>
+                        <span class="tap-counter" id="counter-scared">0</span>
+                    </button>
+                    <button class="emotion-btn" data-emotion="surprised" data-emoji="😲" data-label="Terkejut">
+                        <span class="emoji">😲</span>
+                        <span class="label">Terkejut</span>
+                        <span class="tap-counter" id="counter-surprised">0</span>
+                    </button>
+                    <button class="emotion-btn" data-emotion="tired" data-emoji="😴" data-label="Lelah">
+                        <span class="emoji">😴</span>
+                        <span class="label">Lelah</span>
+                        <span class="tap-counter" id="counter-tired">0</span>
+                    </button>
+                    <button class="emotion-btn" data-emotion="loved" data-emoji="❤️" data-label="Dicintai">
+                        <span class="emoji">❤️</span>
+                        <span class="label">Dicintai</span>
+                        <span class="tap-counter" id="counter-loved">0</span>
+                    </button>
+                    <button class="emotion-btn" data-emotion="playful" data-emoji="😜" data-label="Ceria">
+                        <span class="emoji">😜</span>
+                        <span class="label">Ceria</span>
+                        <span class="tap-counter" id="counter-playful">0</span>
+                    </button>
+                </div>
 
-        <!-- FOOTER: RESET + TOTAL TAP -->
-        <div class="footer-actions">
-            <button class="reset-btn" id="resetBtn">↺ Kembali</button>
-            <span class="total-indicator" id="totalTapIndicator">Total: 0 tap</span>
-        </div>
+                <!-- FOOTER -->
+                <div class="footer-actions">
+                    <button class="reset-btn" id="resetBtn">↺ Kembali</button>
+                    <span class="total-indicator" id="totalTapIndicator">Total: 0 tap</span>
+                </div>
+            </div>
 
+        </div>
     </div>
 
     <script>
         (function() {
             'use strict';
 
-            // ---------- DATA EMOSI ----------
             const EMOTIONS = {
-                happy: { emoji: '😊', label: 'Senang', color: '#ffd93d', bg: '#fff8e7', message: 'Aku merasa senang!' },
-                sad: { emoji: '😢', label: 'Sedih', color: '#6c9bd9', bg: '#e8f0fe', message: 'Aku merasa sedih...' },
-                angry: { emoji: '😡', label: 'Marah', color: '#f56a6a', bg: '#fde8e8', message: 'Aku merasa marah!' },
-                scared: { emoji: '😨', label: 'Takut', color: '#b38bdb', bg: '#f0e8fd', message: 'Aku merasa takut...' },
+                happy:     { emoji: '😊', label: 'Senang',   color: '#ffd93d', bg: '#fff8e7', message: 'Aku merasa senang!' },
+                sad:       { emoji: '😢', label: 'Sedih',    color: '#6c9bd9', bg: '#e8f0fe', message: 'Aku merasa sedih...' },
+                angry:     { emoji: '😡', label: 'Marah',    color: '#f56a6a', bg: '#fde8e8', message: 'Aku merasa marah!' },
+                scared:    { emoji: '😨', label: 'Takut',    color: '#b38bdb', bg: '#f0e8fd', message: 'Aku merasa takut...' },
                 surprised: { emoji: '😲', label: 'Terkejut', color: '#f5b86a', bg: '#fef3e0', message: 'Aku terkejut!' },
-                tired: { emoji: '😴', label: 'Lelah', color: '#9aaec9', bg: '#eaeef5', message: 'Aku merasa lelah...' },
-                loved: { emoji: '❤️', label: 'Dicintai', color: '#f58a9f', bg: '#fde8f0', message: 'Aku merasa dicintai ❤️' },
-                playful: { emoji: '😜', label: 'Ceria', color: '#7bc97b', bg: '#e8fce8', message: 'Aku merasa ceria!' }
+                tired:     { emoji: '😴', label: 'Lelah',    color: '#9aaec9', bg: '#eaeef5', message: 'Aku merasa lelah...' },
+                loved:     { emoji: '❤️', label: 'Dicintai', color: '#f58a9f', bg: '#fde8f0', message: 'Aku merasa dicintai ❤️' },
+                playful:   { emoji: '😜', label: 'Ceria',    color: '#7bc97b', bg: '#e8fce8', message: 'Aku merasa ceria!' }
             };
 
-            // DOM refs
-            const emojiBig = document.getElementById('emojiBig');
-            const feelingLabel = document.getElementById('feelingLabel');
-            const hintText = document.getElementById('hintText');
-            const displayArea = document.getElementById('displayArea');
-            const app = document.getElementById('app');
-            const sparkleContainer = document.getElementById('sparkleContainer');
-            const resetBtn = document.getElementById('resetBtn');
+            const emojiBig          = document.getElementById('emojiBig');
+            const feelingLabel      = document.getElementById('feelingLabel');
+            const hintText          = document.getElementById('hintText');
+            const displayArea       = document.getElementById('displayArea');
+            const sparkleContainer  = document.getElementById('sparkleContainer');
+            const resetBtn          = document.getElementById('resetBtn');
             const totalTapIndicator = document.getElementById('totalTapIndicator');
 
-            // ---------- STATE ----------
-            // Counter per emosi (dimulai dari 0)
             const tapCounts = {
-                happy: 0,
-                sad: 0,
-                angry: 0,
-                scared: 0,
-                surprised: 0,
-                tired: 0,
-                loved: 0,
-                playful: 0
+                happy: 0, sad: 0, angry: 0, scared: 0,
+                surprised: 0, tired: 0, loved: 0, playful: 0
             };
 
             let currentEmotion = null;
             let timeoutId = null;
 
-            // ---------- UTILITY ----------
-            function getRandom(min, max) {
-                return Math.random() * (max - min) + min;
-            }
+            const getRandom = (min, max) => Math.random() * (max - min) + min;
 
-            // ---------- SPARKLE (efek bintang) ----------
+            /* ---------- SPARKLE ---------- */
             function createSparkles(x, y, count = 12) {
                 const emojis = ['✨', '⭐', '🌟', '💫', '🌈', '🌸', '💖', '🎈'];
+                const frag = document.createDocumentFragment();
                 for (let i = 0; i < count; i++) {
                     const el = document.createElement('div');
                     el.className = 'sparkle';
                     el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-                    const size = getRandom(18, 40);
-                    el.style.fontSize = size + 'px';
+                    el.style.fontSize = getRandom(18, 40) + 'px';
                     el.style.left = (x + getRandom(-30, 30)) + 'px';
-                    el.style.top = (y + getRandom(-30, 30)) + 'px';
+                    el.style.top  = (y + getRandom(-30, 30)) + 'px';
                     el.style.setProperty('--tx', getRandom(-160, 160) + 'px');
                     el.style.setProperty('--ty', getRandom(-200, -40) + 'px');
-                    sparkleContainer.appendChild(el);
-                    setTimeout(() => el.remove(), 1300);
+                    frag.appendChild(el);
                 }
+                sparkleContainer.appendChild(frag);
+                setTimeout(() => {
+                    while (frag.firstChild) frag.removeChild(frag.firstChild);
+                }, 1300);
             }
 
-            // ---------- CONFETTI (untuk happy/playful) ----------
+            /* ---------- CONFETTI ---------- */
             function createConfetti(count = 32) {
-                const colors = ['#ff6b6b', '#ffd93d', '#6bcb77', '#4d96ff', '#f5576c', '#f093fb', '#ffb347', '#00d2ff'];
+                const colors = ['#ff6b6b','#ffd93d','#6bcb77','#4d96ff','#f5576c','#f093fb','#ffb347','#00d2ff'];
+                const frag = document.createDocumentFragment();
                 for (let i = 0; i < count; i++) {
                     const el = document.createElement('div');
                     el.className = 'confetti-piece';
@@ -563,63 +663,58 @@
                     el.style.width = size + 'px';
                     el.style.height = size + 'px';
                     el.style.borderRadius = Math.random() > 0.5 ? '50%' : '3px';
-                    const startX = getRandom(20, window.innerWidth - 20);
-                    const startY = getRandom(20, window.innerHeight / 2);
-                    el.style.left = startX + 'px';
-                    el.style.top = startY + 'px';
+                    el.style.left = getRandom(20, window.innerWidth - 20) + 'px';
+                    el.style.top  = getRandom(20, window.innerHeight / 2) + 'px';
                     el.style.setProperty('--cx', getRandom(-240, 240) + 'px');
                     el.style.setProperty('--cy', getRandom(180, 420) + 'px');
-                    sparkleContainer.appendChild(el);
-                    setTimeout(() => el.remove(), 1900);
+                    frag.appendChild(el);
                 }
+                sparkleContainer.appendChild(frag);
+                setTimeout(() => {
+                    while (frag.firstChild) frag.removeChild(frag.firstChild);
+                }, 1900);
             }
 
-            // ---------- UPDATE COUNTER TAMPILAN ----------
+            /* ---------- UPDATE COUNTER ---------- */
             function updateCounterDisplay(emotionKey) {
                 const counterEl = document.getElementById('counter-' + emotionKey);
                 if (counterEl) {
                     counterEl.textContent = tapCounts[emotionKey] || 0;
+                    // animasi bump
+                    counterEl.classList.remove('bump');
+                    void counterEl.offsetWidth;
+                    counterEl.classList.add('bump');
+                    setTimeout(() => counterEl.classList.remove('bump'), 280);
                 }
-                // Update total tap
                 const total = Object.values(tapCounts).reduce((a, b) => a + b, 0);
                 totalTapIndicator.textContent = 'Total: ' + total + ' tap';
             }
 
-            // ---------- SET EMOTION ----------
+            /* ---------- SET EMOTION ---------- */
             function setEmotion(emotionKey, fromTap = true) {
                 const data = EMOTIONS[emotionKey];
                 if (!data) return;
 
-                // Hapus timeout sebelumnya
-                if (timeoutId) {
-                    clearTimeout(timeoutId);
-                    timeoutId = null;
-                }
+                if (timeoutId) { clearTimeout(timeoutId); timeoutId = null; }
 
                 currentEmotion = emotionKey;
 
-                // Update display
                 emojiBig.textContent = data.emoji;
                 feelingLabel.innerHTML = `<span class="highlight">${data.message}</span>`;
                 hintText.textContent = '💬 ' + data.label;
 
-                // Animasi pop
                 emojiBig.classList.remove('pop');
-                void emojiBig.offsetWidth; // reflow
+                void emojiBig.offsetWidth;
                 emojiBig.classList.add('pop');
 
-                // Ubah warna background display
                 displayArea.style.background = data.bg;
                 displayArea.style.borderColor = data.color + '66';
-
-                // Ubah warna body (soft)
                 document.body.style.background = data.bg;
 
-                // Efek spesial untuk emosi positif
                 if (emotionKey === 'happy' || emotionKey === 'playful' || emotionKey === 'loved') {
-                    createConfetti(28);
+                    createConfetti(window.innerWidth < 560 ? 20 : 28);
                     setTimeout(() => {
-                        createSparkles(window.innerWidth / 2, window.innerHeight / 2, 18);
+                        createSparkles(window.innerWidth / 2, window.innerHeight / 2, 16);
                     }, 200);
                 } else {
                     setTimeout(() => {
@@ -631,124 +726,96 @@
                     }, 150);
                 }
 
-                // Jika dari tap, tambahkan sparkle di sekitar tombol
                 if (fromTap) {
-                    const btns = document.querySelectorAll('.emotion-btn');
-                    btns.forEach(btn => {
+                    document.querySelectorAll('.emotion-btn').forEach(btn => {
                         if (btn.dataset.emotion === emotionKey) {
                             const rect = btn.getBoundingClientRect();
-                            const cx = rect.left + rect.width / 2;
-                            const cy = rect.top + rect.height / 2;
                             setTimeout(() => {
-                                createSparkles(cx, cy, 10);
+                                createSparkles(
+                                    rect.left + rect.width / 2,
+                                    rect.top  + rect.height / 2,
+                                    10
+                                );
                             }, 100);
                         }
                     });
                 }
 
-                // Reset otomatis setelah 6 detik
-                timeoutId = setTimeout(() => {
-                    resetDisplay();
-                }, 6000);
+                timeoutId = setTimeout(resetDisplay, 6000);
             }
 
-            // ---------- RESET DISPLAY (tanpa mereset counter) ----------
+            /* ---------- RESET DISPLAY ---------- */
             function resetDisplay() {
-                if (timeoutId) {
-                    clearTimeout(timeoutId);
-                    timeoutId = null;
-                }
+                if (timeoutId) { clearTimeout(timeoutId); timeoutId = null; }
                 currentEmotion = null;
                 emojiBig.textContent = '😊';
                 feelingLabel.innerHTML = '<span class="highlight">Aku merasa...</span>';
-                hintText.textContent = 'ketuk salah satu perasaan di bawah';
+                hintText.textContent = 'ketuk salah satu perasaan';
                 displayArea.style.background = 'rgba(245, 247, 255, 0.7)';
                 displayArea.style.borderColor = 'rgba(150, 150, 200, 0.25)';
                 document.body.style.background = '#f0f4ff';
                 emojiBig.classList.remove('pop');
             }
 
-            // ---------- HANDLE TAP ----------
+            /* ---------- HANDLE TAP ---------- */
             function handleEmotionTap(e) {
                 const btn = e.currentTarget;
                 const emotionKey = btn.dataset.emotion;
                 if (!emotionKey) return;
 
-                // Haptic feedback (getaran ringan jika didukung)
-                if (navigator.vibrate) {
-                    navigator.vibrate(12);
-                }
+                if (navigator.vibrate) navigator.vibrate(12);
 
-                // Efek klik pada tombol
                 btn.style.transform = 'scale(0.88)';
-                setTimeout(() => {
-                    btn.style.transform = '';
-                }, 150);
+                setTimeout(() => { btn.style.transform = ''; }, 150);
 
-                // --- INCREMENT COUNTER ---
                 tapCounts[emotionKey] = (tapCounts[emotionKey] || 0) + 1;
                 updateCounterDisplay(emotionKey);
-
-                // Set emosi (tampilkan di display)
                 setEmotion(emotionKey, true);
             }
 
-            // ---------- RESET COUNTER (tombol reset) ----------
+            /* ---------- RESET SEMUA ---------- */
             function resetAllCounters() {
                 for (let key in tapCounts) {
                     tapCounts[key] = 0;
-                    updateCounterDisplay(key);
+                    const el = document.getElementById('counter-' + key);
+                    if (el) el.textContent = '0';
                 }
-                // Reset tampilan juga
+                totalTapIndicator.textContent = 'Total: 0 tap';
                 resetDisplay();
-                // Total update sudah di updateCounterDisplay
                 if (navigator.vibrate) navigator.vibrate(8);
             }
 
-            // ---------- INIT ----------
+            /* ---------- INIT ---------- */
             function init() {
-                // Pasang event listener ke semua tombol
-                const buttons = document.querySelectorAll('.emotion-btn');
-                buttons.forEach(btn => {
+                document.querySelectorAll('.emotion-btn').forEach(btn => {
                     btn.addEventListener('click', handleEmotionTap);
-                    btn.addEventListener('touchstart', function(e) {
+                    btn.addEventListener('touchstart', function() {
                         this.style.transform = 'scale(0.92)';
                     }, { passive: true });
-                    btn.addEventListener('touchend', function(e) {
+                    btn.addEventListener('touchend', function() {
+                        this.style.transform = '';
+                    }, { passive: true });
+                    btn.addEventListener('touchcancel', function() {
                         this.style.transform = '';
                     }, { passive: true });
                 });
 
-                // Reset button: reset semua counter dan tampilan
                 resetBtn.addEventListener('click', function(e) {
                     e.stopPropagation();
                     resetAllCounters();
                 });
 
-                // Inisialisasi tampilan counter
-                for (let key in tapCounts) {
-                    updateCounterDisplay(key);
-                }
-                // Total awal
-                const total = Object.values(tapCounts).reduce((a, b) => a + b, 0);
-                totalTapIndicator.textContent = 'Total: ' + total + ' tap';
-
-                // Reset display awal
                 resetDisplay();
-
-                // Sparkle pembuka
                 setTimeout(() => {
                     createSparkles(window.innerWidth / 2, window.innerHeight / 2, 8);
                 }, 400);
             }
 
-            // Jalankan setelah DOM siap
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', init);
             } else {
                 init();
             }
-
         })();
     </script>
 
